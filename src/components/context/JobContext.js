@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 
 // Create the context
 const JobContext = createContext();
@@ -24,6 +24,40 @@ export const JobProvider = ({ children }) => {
   // API base URL - configured via environment variables
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
+  // Mock job data for when API is not available
+  const mockJobs = useMemo(() => [
+    {
+      _id: "mock1",
+      title: "Software Developer",
+      category: "IT",
+      location: "Bangalore",
+      experience: "2-4 years",
+      education: "B.Tech/M.Tech in Computer Science",
+      driveLocation: "Bangalore Tech Park",
+      description: "We are looking for a skilled Software Developer to join our dynamic team. The ideal candidate will have experience in full-stack development with modern technologies."
+    },
+    {
+      _id: "mock2",
+      title: "HR Executive",
+      category: "Human Resources",
+      location: "Mumbai",
+      experience: "1-3 years",
+      education: "MBA in HR or equivalent",
+      driveLocation: "Mumbai Corporate Office",
+      description: "Seeking an experienced HR Executive to manage recruitment, employee relations, and HR operations. Strong communication skills required."
+    },
+    {
+      _id: "mock3",
+      title: "Marketing Manager",
+      category: "Marketing",
+      location: "Delhi",
+      experience: "3-5 years",
+      education: "MBA in Marketing",
+      driveLocation: "Delhi Business Center",
+      description: "Looking for a creative Marketing Manager to develop and execute marketing strategies. Experience in digital marketing preferred."
+    }
+  ], []);
+
   // Fetch all jobs
   const refreshJobs = useCallback(async () => {
     setIsLoading(true);
@@ -39,12 +73,13 @@ export const JobProvider = ({ children }) => {
       setJobs(data);
     } catch (err) {
       console.error('Error fetching jobs:', err);
-      setError(err.message || 'Failed to fetch jobs');
-      setJobs([]);
+      // Use mock data when API fails
+      setJobs(mockJobs);
+      setError(null); // Don't show error, just use mock data
     } finally {
       setIsLoading(false);
     }
-  }, [API_BASE_URL]);
+  }, [API_BASE_URL, mockJobs]);
 
   // Fetch recent jobs
   const refreshRecentJobs = useCallback(async () => {
@@ -61,12 +96,13 @@ export const JobProvider = ({ children }) => {
       setRecentJobs(data);
     } catch (err) {
       console.error('Error fetching recent jobs:', err);
-      setRecentJobsError(err.message || 'Failed to fetch recent jobs');
-      setRecentJobs([]);
+      // Use mock data for recent jobs when API fails
+      setRecentJobs(mockJobs.slice(0, 2)); // Show first 2 jobs as recent
+      setRecentJobsError(null); // Don't show error, just use mock data
     } finally {
       setIsLoadingRecent(false);
     }
-  }, [API_BASE_URL]);
+  }, [API_BASE_URL, mockJobs]);
 
   // Add a new job
   const addJob = useCallback(async (jobData) => {

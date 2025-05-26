@@ -18,19 +18,15 @@ let APP_ENV;
 // Determine environment
 if (hostname.includes('vercel.app')) {
   APP_ENV = 'production';
-  console.log('📱 Running on Vercel - Production environment');
 }
 else if (hostname === 'www.championshrservices.com' || hostname === 'championshrservices.com') {
   APP_ENV = 'production';
-  console.log('🌐 Running on production domain');
 }
 else if (hostname === 'localhost' || hostname === '127.0.0.1') {
   APP_ENV = 'development';
-  console.log('💻 Running in development environment');
 }
 else {
   APP_ENV = 'production';
-  console.log('⚠️ Unknown environment - defaulting to production');
 }
 
 // Create a config object to export

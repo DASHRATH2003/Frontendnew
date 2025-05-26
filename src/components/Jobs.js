@@ -1,41 +1,53 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useJobContext } from "./context/JobContext";
 import { useNavigate } from "react-router-dom";
 import { FaBriefcase, FaMapMarkerAlt, FaGraduationCap, FaLocationArrow, FaUpload, FaEnvelope, FaPhone } from 'react-icons/fa';
 import './Jobs.css';
 
 const Jobs = () => {
-  const {
-    jobs,
-    recentJobs,
-    isLoading: contextLoading,
-    isLoadingRecent,
-    error: contextError,
-    recentJobsError,
-    refreshJobs,
-    refreshRecentJobs
-  } = useJobContext();
-  const [filteredJobs, setFilteredJobs] = useState([]);
-  const navigate = useNavigate();
+  const [jobs, setJobs] = useState([]);
+  const [recentJobs, setRecentJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingRecent, setLoadingRecent] = useState(true);
+  const [error, setError] = useState(null);
+  const [recentError, setRecentError] = useState(null);
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    refreshJobs();
-    refreshRecentJobs();
-  }, [refreshJobs, refreshRecentJobs]);
-
-  useEffect(() => {
-    if (jobs) {
-      setFilteredJobs(jobs);
+  const fetchJobs = async () => {
+    try {
+      const response = await fetch('https://backendnew-plum.vercel.app/api/jobs');
+      const data = await response.json();
+      setJobs(data);
+    } catch (err) {
+      setError("Failed to load jobs");
+    } finally {
+      setLoading(false);
     }
-  }, [jobs]);
+  };
+
+  const fetchRecentJobs = async () => {
+    try {
+      const response = await fetch('https://your-vercel-api-url.vercel.app/api/jobs/recent');
+      const data = await response.json();
+      setRecentJobs(data);
+    } catch (err) {
+      setRecentError("Failed to load recent jobs");
+    } finally {
+      setLoadingRecent(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobs();
+    fetchRecentJobs();
+  }, []);
 
   const handleViewJob = (jobId) => {
     navigate(`/view-job/${jobId}`);
   };
 
-  const handleApply = (job) => {
-    const googleFormUrl = process.env.REACT_APP_GOOGLE_FORM_URL || "https://docs.google.com/forms/d/e/1FAIpQLScRvVyo6og6ntYbH9Y12OaxBD1lCZcq_iv7TFRNpW3BbTralg/viewform?usp=sf_link";
+  const handleApply = () => {
+    const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLScRvVyo6og6ntYbH9Y12OaxBD1lCZcq_iv7TFRNpW3BbTralg/viewform?usp=sf_link";
     window.open(googleFormUrl, '_blank');
   };
 
@@ -46,20 +58,16 @@ const Jobs = () => {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Check file type
       if (!file.type.includes('pdf') && !file.type.includes('doc') && !file.type.includes('docx')) {
         alert('Please upload a PDF or Word document');
         return;
       }
-      // Check file size (configurable via environment variable)
-      const maxFileSize = parseInt(process.env.REACT_APP_MAX_FILE_SIZE) || (5 * 1024 * 1024);
+      const maxFileSize = 5 * 1024 * 1024;
       if (file.size > maxFileSize) {
         alert(`File size should be less than ${Math.round(maxFileSize / (1024 * 1024))}MB`);
         return;
       }
-      // Here you would handle the file upload
       console.log('Resume selected:', file.name);
-      // You can add your file upload logic here
     }
   };
 
@@ -68,97 +76,72 @@ const Jobs = () => {
       <div className="jobs-container">
         <div className="jobs-list-section">
           <div className="results-header">
-            <h2>Available Positions <span>({filteredJobs.length})</span></h2>
+            <h2>Available Positions <span>({jobs.length})</span></h2>
           </div>
 
-          {contextLoading ? (
+          {loading ? (
             <div className="loading-spinner">
               <div className="spinner"></div>
               <p>Loading jobs...</p>
             </div>
-          ) : contextError ? (
+          ) : error ? (
             <div className="error-message">
               <h3>Error Loading Jobs</h3>
-              <p>{contextError}</p>
-              <button onClick={refreshJobs}>Try Again</button>
+              <p>{error}</p>
+              <button onClick={fetchJobs}>Try Again</button>
+            </div>
+          ) : jobs.length === 0 ? (
+            <div className="no-jobs">
+              <h3>No Jobs Found</h3>
+              <p>There are currently no job openings available.</p>
             </div>
           ) : (
-            <>
-              {filteredJobs.length === 0 ? (
-                <div className="no-jobs">
-                  <h3>No Jobs Found</h3>
-                  <p>There are currently no job openings available.</p>
-                </div>
-              ) : (
-                <div className="jobs-grid">
-                  {filteredJobs.map((job) => (
-                    <div key={job._id} className="job-card">
-                      {/* 1st: Job Title */}
-                      <div className="job-title-section">
-                        <h3>{job.title}</h3>
-                      </div>
-
-                      {/* 2nd: Category, Location, Experience */}
-                      <div className="job-primary-details">
-                        <span className="category-tag">{job.category}</span>
-                        <div className="detail-item">
-                          <FaMapMarkerAlt />
-                          <span>{job.location}</span>
-                        </div>
-                        <div className="detail-item">
-                          <FaBriefcase />
-                          <span>{job.experience}</span>
-                        </div>
-                      </div>
-
-                      {/* 3rd: Education */}
-                      <div className="job-education">
-                        <div className="detail-item">
-                          <FaGraduationCap />
-                          <span>{job.education}</span>
-                        </div>
-                      </div>
-
-                      {/* 4th: Drive Location */}
-                      {job.driveLocation && (
-                        <div className="job-drive-location">
-                          <div className="detail-item">
-                            <FaLocationArrow />
-                            <span>Drive: {job.driveLocation}</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* 5th: Job Description */}
-                      <div className="job-description-section">
-                        <h4>Description:</h4>
-                        <p className="job-description">
-                          {job.description.length > 150
-                            ? `${job.description.substring(0, 150)}...`
-                            : job.description}
-                        </p>
-                      </div>
-
-                      {/* 6th: Buttons */}
-                      <div className="button-group">
-                        <button
-                          className="view-button"
-                          onClick={() => handleViewJob(job._id)}
-                        >
-                          View More
-                        </button>
-                        <button
-                          className="apply-button"
-                          onClick={() => handleApply(job)}
-                        >
-                          Apply
-                        </button>
+            <div className="jobs-grid">
+              {jobs.map((job) => (
+                <div key={job._id} className="job-card">
+                  <div className="job-title-section">
+                    <h3>{job.title}</h3>
+                  </div>
+                  <div className="job-primary-details">
+                    <span className="category-tag">{job.category}</span>
+                    <div className="detail-item">
+                      <FaMapMarkerAlt />
+                      <span>{job.location}</span>
+                    </div>
+                    <div className="detail-item">
+                      <FaBriefcase />
+                      <span>{job.experience}</span>
+                    </div>
+                  </div>
+                  <div className="job-education">
+                    <div className="detail-item">
+                      <FaGraduationCap />
+                      <span>{job.education}</span>
+                    </div>
+                  </div>
+                  {job.driveLocation && (
+                    <div className="job-drive-location">
+                      <div className="detail-item">
+                        <FaLocationArrow />
+                        <span>Drive: {job.driveLocation}</span>
                       </div>
                     </div>
-                  ))}
+                  )}
+                  <div className="job-description-section">
+                    <h4>Description:</h4>
+                    <p className="job-description">
+                      {job.description.length > 150
+                        ? `${job.description.substring(0, 150)}...`
+                        : job.description}
+                    </p>
+                  </div>
+                  <div className="button-group">
+                    <button className="view-button" onClick={() => handleViewJob(job._id)}>View More</button>
+                    <button className="apply-button" onClick={handleApply}>Apply</button>
+                  </div>
                 </div>
-              )}
-            </>
+              ))}
+            </div>
           )}
         </div>
       </div>
@@ -168,17 +151,15 @@ const Jobs = () => {
           <h3>Recent Job Openings</h3>
           <div className="recent-jobs-content">
             <div className="recent-jobs-list">
-              {isLoadingRecent ? (
+              {loadingRecent ? (
                 <div className="recent-jobs-loading">
                   <div className="spinner-small"></div>
                   <p>Loading recent jobs...</p>
                 </div>
-              ) : recentJobsError ? (
+              ) : recentError ? (
                 <div className="recent-jobs-error">
-                  <p>{recentJobsError}</p>
-                  <button onClick={refreshRecentJobs} className="retry-button">
-                    Retry
-                  </button>
+                  <p>{recentError}</p>
+                  <button onClick={fetchRecentJobs} className="retry-button">Retry</button>
                 </div>
               ) : recentJobs.length === 0 ? (
                 <div className="no-recent-jobs">
@@ -194,9 +175,7 @@ const Jobs = () => {
                         {job.location}
                       </div>
                     </div>
-                    <div className="recent-job-experience">
-                      {job.experience}
-                    </div>
+                    <div className="recent-job-experience">{job.experience}</div>
                   </div>
                 ))
               )}
@@ -206,7 +185,7 @@ const Jobs = () => {
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                accept={process.env.REACT_APP_ALLOWED_FILE_TYPES || ".pdf,.doc,.docx"}
+                accept=".pdf,.doc,.docx"
                 style={{ display: 'none' }}
               />
               <button className="submit-resume-btn" onClick={handleResumeUpload}>
@@ -221,13 +200,11 @@ const Jobs = () => {
           <h3>Need Help?</h3>
           <p>Can't find what you're looking for? Contact our recruitment team for assistance.</p>
           <div className="contact-options">
-            <a href={`mailto:${process.env.REACT_APP_CONTACT_EMAIL || 'recruitment@champions.com'}`} className="contact-link">
-              <FaEnvelope />
-              Email Us
+            <a href="mailto:recruitment@champions.com" className="contact-link">
+              <FaEnvelope /> Email Us
             </a>
-            <a href={`tel:${process.env.REACT_APP_CONTACT_PHONE || '+919632492563'}`} className="contact-link">
-              <FaPhone />
-              Call Us
+            <a href="tel:+919632492563" className="contact-link">
+              <FaPhone /> Call Us
             </a>
           </div>
         </div>

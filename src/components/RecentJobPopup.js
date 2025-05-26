@@ -13,11 +13,11 @@ const RecentJobPopup = () => {
   useEffect(() => {
     // Show popup for 5 seconds every 30 seconds
     const showInterval = setInterval(() => {
-      if (recentJobs && recentJobs.length > 0) {
+      if (recentJobs && Array.isArray(recentJobs) && recentJobs.length > 0) {
         setShowPopup(true);
         // Update job index for next time
         setCurrentJobIndex((prevIndex) => (prevIndex + 1) % recentJobs.length);
-        
+
         // Hide after 5 seconds
         setTimeout(() => {
           setShowPopup(false);
@@ -49,7 +49,7 @@ const RecentJobPopup = () => {
     }
   };
 
-  if (!showPopup || !recentJobs || recentJobs.length === 0) {
+  if (!showPopup || !recentJobs || !Array.isArray(recentJobs) || recentJobs.length === 0) {
     return null;
   }
 
@@ -75,7 +75,7 @@ const RecentJobPopup = () => {
             <span>{currentJob.experience}</span>
           </div>
         </div>
-        <button 
+        <button
           className="apply-button"
           onClick={() => handleApply(currentJob)}
         >
@@ -86,4 +86,4 @@ const RecentJobPopup = () => {
   );
 };
 
-export default RecentJobPopup; 
+export default RecentJobPopup;

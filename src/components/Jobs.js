@@ -17,10 +17,13 @@ const Jobs = () => {
     try {
       const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
       const response = await fetch(`${API_BASE_URL}/jobs`);
-      const data = await response.json();
-      setJobs(data);
+      const result = await response.json();
+      // Handle backend response format: { success: true, data: [...] }
+      const data = result.success ? result.data : result;
+      setJobs(Array.isArray(data) ? data : []);
     } catch (err) {
       setError("Failed to load jobs");
+      setJobs([]); // Ensure jobs is always an array
     } finally {
       setLoading(false);
     }
@@ -30,10 +33,13 @@ const Jobs = () => {
     try {
       const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
       const response = await fetch(`${API_BASE_URL}/jobs/recent`);
-      const data = await response.json();
-      setRecentJobs(data);
+      const result = await response.json();
+      // Handle backend response format: { success: true, data: [...] }
+      const data = result.success ? result.data : result;
+      setRecentJobs(Array.isArray(data) ? data : []);
     } catch (err) {
       setRecentError("Failed to load recent jobs");
+      setRecentJobs([]); // Ensure recentJobs is always an array
     } finally {
       setLoadingRecent(false);
     }
@@ -78,7 +84,7 @@ const Jobs = () => {
       <div className="jobs-container">
         <div className="jobs-list-section">
           <div className="results-header">
-            <h2>Available Positions <span>({jobs.length})</span></h2>
+            <h2>Available Positions <span>({Array.isArray(jobs) ? jobs.length : 0})</span></h2>
           </div>
 
           {loading ? (
@@ -92,7 +98,7 @@ const Jobs = () => {
               <p>{error}</p>
               <button onClick={fetchJobs}>Try Again</button>
             </div>
-          ) : jobs.length === 0 ? (
+          ) : !Array.isArray(jobs) || jobs.length === 0 ? (
             <div className="no-jobs">
               <h3>No Jobs Found</h3>
               <p>There are currently no job openings available.</p>
@@ -163,7 +169,7 @@ const Jobs = () => {
                   <p>{recentError}</p>
                   <button onClick={fetchRecentJobs} className="retry-button">Retry</button>
                 </div>
-              ) : recentJobs.length === 0 ? (
+              ) : !Array.isArray(recentJobs) || recentJobs.length === 0 ? (
                 <div className="no-recent-jobs">
                   <p>No recent job openings</p>
                 </div>

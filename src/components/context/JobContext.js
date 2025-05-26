@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 // Create the context
 const JobContext = createContext();
@@ -38,7 +38,7 @@ export const JobProvider = ({ children }) => {
       const result = await response.json();
       // Handle backend response format: { success: true, data: [...] }
       const data = result.success ? result.data : result;
-      setJobs(data);
+      setJobs(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error fetching jobs:', err);
       setError(err.message || 'Failed to fetch jobs');
@@ -60,7 +60,7 @@ export const JobProvider = ({ children }) => {
       const result = await response.json();
       // Handle backend response format: { success: true, data: [...] }
       const data = result.success ? result.data : result;
-      setRecentJobs(data);
+      setRecentJobs(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error fetching recent jobs:', err);
       setRecentJobsError(err.message || 'Failed to fetch recent jobs');
@@ -73,6 +73,9 @@ export const JobProvider = ({ children }) => {
   // Add a new job
   const addJob = useCallback(async (jobData) => {
     try {
+      console.log('Adding job with data:', jobData);
+      console.log('API URL:', `${API_BASE_URL}/jobs`);
+
       const response = await fetch(`${API_BASE_URL}/jobs`, {
         method: 'POST',
         headers: {
@@ -81,14 +84,21 @@ export const JobProvider = ({ children }) => {
         body: JSON.stringify(jobData),
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
+      console.log('Success response:', result);
+
       // Handle backend response format: { success: true, data: {...} }
       const newJob = result.success ? result.data : result;
-      setJobs(prevJobs => [...prevJobs, newJob]);
+      setJobs(prevJobs => Array.isArray(prevJobs) ? [...prevJobs, newJob] : [newJob]);
       return newJob;
     } catch (err) {
       console.error('Error adding job:', err);
@@ -145,7 +155,7 @@ export const JobProvider = ({ children }) => {
 
   // Get a single job by ID
   const getJobById = useCallback((jobId) => {
-    return jobs.find(job => job._id === jobId);
+    return Array.isArray(jobs) ? jobs.find(job => job._id === jobId) : null;
   }, [jobs]);
 
   // Context value

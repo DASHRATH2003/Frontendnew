@@ -19,17 +19,17 @@ function ContactUs() {
                     <div className="col-md-6">
                         <h2 className="fw-bold text-danger mb-4">Contact Us</h2>
                         <p className="text-muted mb-2">
-                            Contact us with any questions or inquiries or call + <strong>91-9632492563</strong>.
+                            Contact us with any questions or inquiries or call <strong>{process.env.REACT_APP_CONTACT_PHONE || '+91-9632492563'}</strong>.
                         </p>
                         <p className="text-muted">
-                            We would be happy to answer your questions and set up a meeting with you. We assure you, <span className="text-danger">Champions HR Services</span> can set you apart from the flock.
+                            We would be happy to answer your questions and set up a meeting with you. We assure you, <span className="text-danger">{process.env.REACT_APP_COMPANY_NAME || 'Champions HR Services'}</span> can set you apart from the flock.
                         </p>
 
                         {/* Social Icons */}
                         <div className="d-flex gap-3 mt-4">
-                            <a href="#" className="text-dark fs-5"><FaFacebookF /></a>
-                            <a href="#" className="text-dark fs-5"><FaLinkedinIn /></a>
-                            <a href="#" className="text-dark fs-5"><FaTwitter /></a>
+                            <a href={process.env.REACT_APP_FACEBOOK_URL || "#"} className="text-dark fs-5" target="_blank" rel="noopener noreferrer"><FaFacebookF /></a>
+                            <a href={process.env.REACT_APP_LINKEDIN_URL || "#"} className="text-dark fs-5" target="_blank" rel="noopener noreferrer"><FaLinkedinIn /></a>
+                            <a href={process.env.REACT_APP_TWITTER_URL || "#"} className="text-dark fs-5" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
                             <a href="#" className="text-dark fs-5"><FaYoutube /></a>
                             <a href="#" className="text-dark fs-5"><FaInstagram /></a>
                         </div>
@@ -47,14 +47,14 @@ function ContactUs() {
                         <div className="border p-4 text-center bg-white rounded shadow-sm">
                             <FaHandshake className="text-danger fs-3 mb-2" />
                             <h5 className="text-danger fw-bold mb-1">Need Help?</h5>
-                            <p className="mb-0">info@Champions HR Services.com</p>
+                            <p className="mb-0">{process.env.REACT_APP_CONTACT_EMAIL || 'info@championshservices.com'}</p>
                         </div>
                     </div>
                     <div className="col-md-4">
                         <div className="border p-4 text-center bg-white rounded shadow-sm">
                             <FaPhoneAlt className="text-danger fs-3 mb-2" />
                             <h5 className="text-danger fw-bold mb-1">Feel Like Talking</h5>
-                            <p className="mb-0">+91-96-3249-2563</p>
+                            <p className="mb-0">{process.env.REACT_APP_CONTACT_PHONE || '+91-9632492563'}</p>
                         </div>
                     </div>
                 </div>

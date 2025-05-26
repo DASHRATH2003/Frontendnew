@@ -6,15 +6,15 @@ import './Jobs.css';
 
 const Jobs = () => {
   const location = useLocation();
-  const { 
-    jobs, 
+  const {
+    jobs,
     recentJobs,
-    isLoading: contextLoading, 
+    isLoading: contextLoading,
     isLoadingRecent,
     error: contextError,
-    recentJobsError, 
+    recentJobsError,
     refreshJobs,
-    refreshRecentJobs 
+    refreshRecentJobs
   } = useJobContext();
   const [filteredJobs, setFilteredJobs] = useState([]);
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const Jobs = () => {
   };
 
   const handleApply = (job) => {
-    const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLScRvVyo6og6ntYbH9Y12OaxBD1lCZcq_iv7TFRNpW3BbTralg/viewform?usp=sf_link";
+    const googleFormUrl = process.env.REACT_APP_GOOGLE_FORM_URL || "https://docs.google.com/forms/d/e/1FAIpQLScRvVyo6og6ntYbH9Y12OaxBD1lCZcq_iv7TFRNpW3BbTralg/viewform?usp=sf_link";
     window.open(googleFormUrl, '_blank');
   };
 
@@ -52,9 +52,10 @@ const Jobs = () => {
         alert('Please upload a PDF or Word document');
         return;
       }
-      // Check file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('File size should be less than 5MB');
+      // Check file size (configurable via environment variable)
+      const maxFileSize = parseInt(process.env.REACT_APP_MAX_FILE_SIZE) || (5 * 1024 * 1024);
+      if (file.size > maxFileSize) {
+        alert(`File size should be less than ${Math.round(maxFileSize / (1024 * 1024))}MB`);
         return;
       }
       // Here you would handle the file upload
@@ -141,13 +142,13 @@ const Jobs = () => {
 
                       {/* 6th: Buttons */}
                       <div className="button-group">
-                        <button 
+                        <button
                           className="view-button"
                           onClick={() => handleViewJob(job._id)}
                         >
                           View More
                         </button>
-                        <button 
+                        <button
                           className="apply-button"
                           onClick={() => handleApply(job)}
                         >
@@ -202,11 +203,11 @@ const Jobs = () => {
               )}
             </div>
             <div className="resume-upload-section">
-              <input 
-                type="file" 
+              <input
+                type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                accept=".pdf,.doc,.docx"
+                accept={process.env.REACT_APP_ALLOWED_FILE_TYPES || ".pdf,.doc,.docx"}
                 style={{ display: 'none' }}
               />
               <button className="submit-resume-btn" onClick={handleResumeUpload}>
@@ -221,11 +222,11 @@ const Jobs = () => {
           <h3>Need Help?</h3>
           <p>Can't find what you're looking for? Contact our recruitment team for assistance.</p>
           <div className="contact-options">
-            <a href="mailto:recruitment@champions.com" className="contact-link">
+            <a href={`mailto:${process.env.REACT_APP_CONTACT_EMAIL || 'recruitment@champions.com'}`} className="contact-link">
               <FaEnvelope />
               Email Us
             </a>
-            <a href="tel:+919632492563" className="contact-link">
+            <a href={`tel:${process.env.REACT_APP_CONTACT_PHONE || '+919632492563'}`} className="contact-link">
               <FaPhone />
               Call Us
             </a>

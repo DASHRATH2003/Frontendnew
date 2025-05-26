@@ -21,7 +21,7 @@ export const JobProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [recentJobsError, setRecentJobsError] = useState(null);
 
-  // API base URL - adjust this to match your backend
+  // API base URL - configured via environment variables
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
   // Fetch all jobs

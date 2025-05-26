@@ -27,11 +27,11 @@ function ContactUs() {
 
                         {/* Social Icons */}
                         <div className="d-flex gap-3 mt-4">
-                            <a href={process.env.REACT_APP_FACEBOOK_URL || "#"} className="text-dark fs-5" target="_blank" rel="noopener noreferrer"><FaFacebookF /></a>
-                            <a href={process.env.REACT_APP_LINKEDIN_URL || "#"} className="text-dark fs-5" target="_blank" rel="noopener noreferrer"><FaLinkedinIn /></a>
-                            <a href={process.env.REACT_APP_TWITTER_URL || "#"} className="text-dark fs-5" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
-                            <a href="#" className="text-dark fs-5"><FaYoutube /></a>
-                            <a href="#" className="text-dark fs-5"><FaInstagram /></a>
+                            <a href={process.env.REACT_APP_FACEBOOK_URL || "https://facebook.com/championshservices"} className="text-dark fs-5" target="_blank" rel="noopener noreferrer"><FaFacebookF /></a>
+                            <a href={process.env.REACT_APP_LINKEDIN_URL || "https://linkedin.com/company/championshservices"} className="text-dark fs-5" target="_blank" rel="noopener noreferrer"><FaLinkedinIn /></a>
+                            <a href={process.env.REACT_APP_TWITTER_URL || "https://twitter.com/championshservices"} className="text-dark fs-5" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
+                            <a href={process.env.REACT_APP_YOUTUBE_URL || "https://youtube.com/@championshservices"} className="text-dark fs-5" target="_blank" rel="noopener noreferrer"><FaYoutube /></a>
+                            <a href={process.env.REACT_APP_INSTAGRAM_URL || "https://instagram.com/championshservices"} className="text-dark fs-5" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
                         </div>
                     </div>
 

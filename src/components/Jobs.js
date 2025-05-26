@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useJobContext } from "./context/JobContext";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaBriefcase, FaMapMarkerAlt, FaGraduationCap, FaLocationArrow, FaUpload, FaEnvelope, FaPhone } from 'react-icons/fa';
 import './Jobs.css';
 
 const Jobs = () => {
-  const location = useLocation();
   const {
     jobs,
     recentJobs,

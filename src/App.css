@@ -17,6 +17,7 @@
     color: #dc3545  !important;
   }
   .footer-link {
+    text-decoration: none;
     position: relative;
     display: inline-block;
     color: #fff;

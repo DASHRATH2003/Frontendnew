@@ -15,7 +15,8 @@ const Jobs = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await fetch('https://backendnew-plum.vercel.app/api/jobs');
+      const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${API_BASE_URL}/jobs`);
       const data = await response.json();
       setJobs(data);
     } catch (err) {
@@ -27,7 +28,8 @@ const Jobs = () => {
 
   const fetchRecentJobs = async () => {
     try {
-      const response = await fetch('https://your-vercel-api-url.vercel.app/api/jobs/recent');
+      const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${API_BASE_URL}/jobs/recent`);
       const data = await response.json();
       setRecentJobs(data);
     } catch (err) {

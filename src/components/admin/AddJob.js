@@ -82,8 +82,8 @@ const AddJob = () => {
           <input 
             className="form-control" 
             name="title" 
-            placeholder="e.g. Software Developer" 
-            value={formData.title} 
+            placeholder="" 
+            // value={formData.title} 
             onChange={handleChange}
             required 
           />
@@ -111,8 +111,8 @@ const AddJob = () => {
           <input 
             className="form-control" 
             name="location" 
-            placeholder="e.g. Bangalore" 
-            value={formData.location} 
+            placeholder="" 
+            // value={formData.location} 
             onChange={handleChange}
             required 
           />
@@ -123,8 +123,8 @@ const AddJob = () => {
           <input 
             className="form-control" 
             name="experience" 
-            placeholder="e.g. 2-4 years" 
-            value={formData.experience} 
+            placeholder="" 
+            // value={formData.experience} 
             onChange={handleChange}
             required 
           />
@@ -135,8 +135,8 @@ const AddJob = () => {
           <input 
             className="form-control" 
             name="education" 
-            placeholder="e.g. B.Tech/M.Tech in Computer Science" 
-            value={formData.education} 
+            placeholder="" 
+            // value={formData.education} 
             onChange={handleChange}
             required 
           />
@@ -147,8 +147,8 @@ const AddJob = () => {
           <input 
             className="form-control" 
             name="driveLocation" 
-            placeholder="e.g. Bangalore Tech Park" 
-            value={formData.driveLocation} 
+            placeholder="" 
+            // value={formData.driveLocation} 
             onChange={handleChange}
             required 
           />
@@ -159,8 +159,8 @@ const AddJob = () => {
           <textarea 
             className="form-control" 
             name="description" 
-            placeholder="Describe the job role, responsibilities, and requirements" 
-            value={formData.description} 
+            placeholder="" 
+            // value={formData.description} 
             onChange={handleChange}
             required 
             rows="4"

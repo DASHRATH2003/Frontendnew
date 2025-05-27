@@ -31,16 +31,24 @@ export const JobProvider = ({ children }) => {
     setIsLoading(true);
     setError(null);
     try {
+      console.log('🔄 JobContext: Refreshing jobs from:', `${API_BASE_URL}/jobs`);
       const response = await fetch(`${API_BASE_URL}/jobs`);
+      console.log('🔄 JobContext: Response status:', response.status);
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
+      console.log('🔄 JobContext: Raw result:', result);
+
       // Handle backend response format: { success: true, data: [...] }
       const data = result.success ? result.data : result;
+      console.log('🔄 JobContext: Processed data:', data);
+      console.log('🔄 JobContext: Is array:', Array.isArray(data));
+
       setJobs(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error('Error fetching jobs:', err);
+      console.error('🔄 JobContext: Error fetching jobs:', err);
       setError(err.message || 'Failed to fetch jobs');
       setJobs([]);
     } finally {

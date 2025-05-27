@@ -16,12 +16,30 @@ const Jobs = () => {
   const fetchJobs = async () => {
     try {
       const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      console.log('🔍 Fetching jobs from:', `${API_BASE_URL}/jobs`);
+      console.log('🌍 Environment:', process.env.REACT_APP_ENV);
+      console.log('🔗 API URL from env:', process.env.REACT_APP_API_URL);
+
       const response = await fetch(`${API_BASE_URL}/jobs`);
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response ok:', response.ok);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const result = await response.json();
+      console.log('📦 Raw response:', result);
+
       // Handle backend response format: { success: true, data: [...] }
       const data = result.success ? result.data : result;
+      console.log('📋 Processed data:', data);
+      console.log('📊 Data is array:', Array.isArray(data));
+      console.log('📈 Data length:', data?.length);
+
       setJobs(Array.isArray(data) ? data : []);
     } catch (err) {
+      console.error('❌ Error fetching jobs:', err);
       setError("Failed to load jobs");
       setJobs([]); // Ensure jobs is always an array
     } finally {

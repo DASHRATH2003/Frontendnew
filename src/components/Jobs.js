@@ -15,7 +15,7 @@ const Jobs = () => {
 
   const fetchJobs = async () => {
     try {
-      const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://backendnew-6vdo.onrender.com/api';
       console.log('🔍 Fetching jobs from:', `${API_BASE_URL}/jobs`);
       console.log('🌍 Environment:', process.env.REACT_APP_ENV);
       console.log('🔗 API URL from env:', process.env.REACT_APP_API_URL);
@@ -49,7 +49,7 @@ const Jobs = () => {
 
   const fetchRecentJobs = async () => {
     try {
-      const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://backendnew-6vdo.onrender.com/api';
       const response = await fetch(`${API_BASE_URL}/jobs/recent`);
       const result = await response.json();
       // Handle backend response format: { success: true, data: [...] }

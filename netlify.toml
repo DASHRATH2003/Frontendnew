@@ -15,7 +15,7 @@
   # Node version
   NODE_VERSION = "18"
 
-  # API Configuration
+  # API Configuration - Updated for latest backend
   REACT_APP_API_URL = "https://backend-newone.vercel.app/api"
 
   # Application Configuration

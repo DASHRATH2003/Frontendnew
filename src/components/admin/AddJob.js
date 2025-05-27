@@ -37,47 +37,80 @@ const AddJob = () => {
     setSubmitError(null);
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setIsSubmitting(true);
+  //   setSubmitError(null);
+
+  //   // Basic validation
+  //   if (!formData.title || !formData.description) {
+  //     setSubmitError("Title and description are required");
+  //     setIsSubmitting(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     if (isEdit) {
+  //       await updateJob({ ...formData, id: Number(id) });
+  //       navigate("/admin/manage-jobs", { 
+  //         state: { 
+  //           message: "Job updated successfully!", 
+  //           type: "success" 
+  //         } 
+  //       });
+  //     } else {
+  //       await addJob(formData);
+  //       navigate("/jobs", { 
+  //         state: { 
+  //           message: "Job added successfully!", 
+  //           type: "success" 
+  //         },
+  //         replace: true
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting job:", error);
+  //     const errorMsg = error.response?.data?.message || 
+  //                     error.message || 
+  //                     "Error submitting job. Please try again.";
+  //     setSubmitError(errorMsg);
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitError(null);
+  e.preventDefault();
+  setIsSubmitting(true);
+  setSubmitError(null);
 
-    // Basic validation
-    if (!formData.title || !formData.description) {
-      setSubmitError("Title and description are required");
-      setIsSubmitting(false);
-      return;
+  try {
+    if (isEdit) {
+      await updateJob({ ...formData, id: Number(id) });
+      navigate("/admin/manage-jobs", { 
+        state: { message: "Job updated successfully!" } 
+      });
+    } else {
+      await addJob(formData);
+      navigate("/jobs", { 
+        state: { message: "Job added successfully!" } 
+      });
     }
-
-    try {
-      if (isEdit) {
-        await updateJob({ ...formData, id: Number(id) });
-        navigate("/admin/manage-jobs", { 
-          state: { 
-            message: "Job updated successfully!", 
-            type: "success" 
-          } 
-        });
-      } else {
-        await addJob(formData);
-        navigate("/jobs", { 
-          state: { 
-            message: "Job added successfully!", 
-            type: "success" 
-          },
-          replace: true
-        });
-      }
-    } catch (error) {
-      console.error("Error submitting job:", error);
-      const errorMsg = error.response?.data?.message || 
-                      error.message || 
-                      "Error submitting job. Please try again.";
-      setSubmitError(errorMsg);
-    } finally {
-      setIsSubmitting(false);
+  } catch (error) {
+    console.error("Error submitting job:", error);
+    
+    let errorMessage = "Error submitting job. Please try again.";
+    if (error.message.includes('timed out')) {
+      errorMessage = "The server is taking too long to respond. Please try again later.";
+    } else if (error.message.includes('504')) {
+      errorMessage = "Database timeout. Your job might still be processing. Please check later.";
     }
-  };
+    
+    setSubmitError(errorMessage);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="container mt-4">

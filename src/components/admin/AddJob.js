@@ -34,7 +34,6 @@ const AddJob = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear any previous error when user starts typing
     setSubmitError(null);
   };
 
@@ -43,24 +42,38 @@ const AddJob = () => {
     setIsSubmitting(true);
     setSubmitError(null);
 
+    // Basic validation
+    if (!formData.title || !formData.description) {
+      setSubmitError("Title and description are required");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       if (isEdit) {
         await updateJob({ ...formData, id: Number(id) });
         navigate("/admin/manage-jobs", { 
-          state: { message: "Job updated successfully!" } 
+          state: { 
+            message: "Job updated successfully!", 
+            type: "success" 
+          } 
         });
       } else {
-        const newJob = await addJob(formData);
-        // Short delay to ensure the job appears in the list
-        setTimeout(() => {
-          navigate("/jobs", { 
-            state: { message: "Job added successfully!" } 
-          });
-        }, 500);
+        await addJob(formData);
+        navigate("/jobs", { 
+          state: { 
+            message: "Job added successfully!", 
+            type: "success" 
+          },
+          replace: true
+        });
       }
     } catch (error) {
       console.error("Error submitting job:", error);
-      setSubmitError(error.message || "Error submitting job. Please try again.");
+      const errorMsg = error.response?.data?.message || 
+                      error.message || 
+                      "Error submitting job. Please try again.";
+      setSubmitError(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -83,7 +96,7 @@ const AddJob = () => {
             className="form-control" 
             name="title" 
             placeholder="" 
-            // value={formData.title} 
+            value={formData.title} 
             onChange={handleChange}
             required 
           />
@@ -112,7 +125,7 @@ const AddJob = () => {
             className="form-control" 
             name="location" 
             placeholder="" 
-            // value={formData.location} 
+            value={formData.location} 
             onChange={handleChange}
             required 
           />
@@ -124,7 +137,7 @@ const AddJob = () => {
             className="form-control" 
             name="experience" 
             placeholder="" 
-            // value={formData.experience} 
+            value={formData.experience} 
             onChange={handleChange}
             required 
           />
@@ -136,7 +149,7 @@ const AddJob = () => {
             className="form-control" 
             name="education" 
             placeholder="" 
-            // value={formData.education} 
+            value={formData.education} 
             onChange={handleChange}
             required 
           />
@@ -148,7 +161,7 @@ const AddJob = () => {
             className="form-control" 
             name="driveLocation" 
             placeholder="" 
-            // value={formData.driveLocation} 
+            value={formData.driveLocation} 
             onChange={handleChange}
             required 
           />
@@ -160,7 +173,7 @@ const AddJob = () => {
             className="form-control" 
             name="description" 
             placeholder="" 
-            // value={formData.description} 
+            value={formData.description} 
             onChange={handleChange}
             required 
             rows="4"

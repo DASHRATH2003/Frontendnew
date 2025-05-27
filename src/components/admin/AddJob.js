@@ -79,7 +79,39 @@ const AddJob = () => {
   //   }
   // };
 
-  const handleSubmit = async (e) => {
+//   const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   setIsSubmitting(true);
+//   setSubmitError(null);
+
+//   try {
+//     if (isEdit) {
+//       await updateJob({ ...formData, id: Number(id) });
+//       navigate("/admin/manage-jobs", { 
+//         state: { message: "Job updated successfully!" } 
+//       });
+//     } else {
+//       await addJob(formData);
+//       navigate("/jobs", { 
+//         state: { message: "Job added successfully!" } 
+//       });
+//     }
+//   } catch (error) {
+//     console.error("Error submitting job:", error);
+    
+//     let errorMessage = "Error submitting job. Please try again.";
+//     if (error.message.includes('timed out')) {
+//       errorMessage = "The server is taking too long to respond. Please try again later.";
+//     } else if (error.message.includes('504')) {
+//       errorMessage = "Database timeout. Your job might still be processing. Please check later.";
+//     }
+    
+//     setSubmitError(errorMessage);
+//   } finally {
+//     setIsSubmitting(false);
+//   }
+// };
+const handleSubmit = async (e) => {
   e.preventDefault();
   setIsSubmitting(true);
   setSubmitError(null);
@@ -88,25 +120,31 @@ const AddJob = () => {
     if (isEdit) {
       await updateJob({ ...formData, id: Number(id) });
       navigate("/admin/manage-jobs", { 
-        state: { message: "Job updated successfully!" } 
+        state: { 
+          message: "Job updated successfully!",
+          type: "success"
+        } 
       });
     } else {
       await addJob(formData);
       navigate("/jobs", { 
-        state: { message: "Job added successfully!" } 
+        state: { 
+          message: "Job added successfully!",
+          type: "success"
+        },
+        replace: true
       });
     }
   } catch (error) {
-    console.error("Error submitting job:", error);
+    console.error("Submission error:", error);
     
-    let errorMessage = "Error submitting job. Please try again.";
-    if (error.message.includes('timed out')) {
-      errorMessage = "The server is taking too long to respond. Please try again later.";
-    } else if (error.message.includes('504')) {
-      errorMessage = "Database timeout. Your job might still be processing. Please check later.";
+    let userMessage = "Error submitting job. Please try again.";
+    if (error.message.includes('504') || error.message.includes('timed out')) {
+      userMessage = "The system is busy. Your job might still be processing. " + 
+                   "Please check your jobs list in a few moments.";
     }
     
-    setSubmitError(errorMessage);
+    setSubmitError(userMessage);
   } finally {
     setIsSubmitting(false);
   }
